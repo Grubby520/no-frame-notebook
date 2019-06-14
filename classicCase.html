@@ -1,0 +1,258 @@
+<html>
+  <body>
+    <script>
+      function Log(back) {
+        console.log(back)
+      }
+    </script>
+    <script>
+      // let length1 = 10;
+      // let fn = function() {
+      //   Log(this);
+      //   return length;
+      // }
+      // let arr = [fn];
+      // Log(arr[0]());
+    </script>
+    <script>
+      // let length = 10;
+      // let fn = function() {
+      //   Log(this);
+      //   return this.length;
+      // }.bind(this);
+      // let arr = [fn];
+      // Log(arr[0]());
+    </script>
+    <script>
+      // var length = 10;
+      // let length = 10;
+      // let fn1 = () => {
+      //   Log(this);
+      //   Log(this.length);
+      // };
+      // let fn2 = function() {
+      //   Log(this);
+      //   Log(this.length);
+      //   return length;
+      // }
+      // let arr = [fn1, fn2];
+      // Log(arr);
+      // Log(arr[0](), arr[1]());
+    </script>
+    <script>
+      // const user = {
+      //   name: 'Tyler',
+      //   age: 27,
+      //   greet() {
+      //     Log(this);
+      //     Log(`Hello, my name is ${this.name}`)
+      //   },
+      //   mother: {
+      //     name: 'Stacey',
+      //     greet() {
+      //       Log(this);
+      //       Log(`Hello, my name is ${this.name}`)
+      //     }
+      //   }
+      // }
+      // user.greet();
+      // user.mother.greet();
+    </script>
+    <script>
+      // function greet() {
+      //   Log(`Hello, my name is ${this.name}`)
+      // }
+      // const user = {
+      //   name: 'Tyler',
+      //   age: 27
+      // }
+      // greet();
+      // greet.call(user);
+    </script>
+    <script>
+      // function greet (lang1, lang2, lang3) {
+      //   Log(`Hello, my name is ${this.name} and I know ${lang1}, ${lang2}, and ${lang3}`)
+      // }
+
+      // const user = {
+      //   name: 'Tyler',
+      //   age: 27,
+      // }
+
+      // const languages = ['JavaScript', 'Ruby', 'Python']
+
+      // greet.call(user, languages[0], languages[1], languages[2]);
+      // greet.apply(user, languages);
+      // const newFn = greet.bind(user, languages[0], languages[1], languages[2]);
+      // newFn();
+    </script>
+    <script>
+      // function User(name, age) {
+      //   console.table(this);
+      //   Log(this);
+      //   this.name = name;
+      //   this.age = age;
+      // }
+      // const user = new User('Tyler', 27);
+      // Log(user);
+    </script>
+    <script>
+      // function sayAge () {
+      //   Log(this);
+      //   Log(`My age is ${this.age}`)
+      // }
+      // sayAge();
+
+      // function User() {
+      //   this.name = 'John';
+      //   setTimeout(function greet() {
+      //     Log(this);
+      //     Log(`Hello, my name is ${this.name}`);
+      //   }, 1000);
+      // }
+      // const user = new User();
+    </script>
+    <script>
+      // function User() {
+      //   this.name = 'John';
+      //   setTimeout(function greet() {
+      //     Log(this);
+      //     Log(`Hello, my name is ${this.name}`); 
+      //   }.call(this), 1000);
+      // }
+      // const user = new User();
+
+      // function User() {
+      //   this.name = 'John';
+
+      //   setTimeout(function greet() {
+      //     Log(this);
+      //     Log(`Hello, my name is ${this.name}`); 
+      //   }.apply(this), 1000);
+      // }
+      // const user = new User();
+
+      // function User() {
+      //   this.name = 'John';
+
+      //   setTimeout(function greet() {
+      //     Log(this);
+      //     Log(`Hello, my name is ${this.name}`); 
+      //   }.bind(this), 1000);
+      // }
+      // const user = new User();
+
+      // function User() {
+      //   this.name = 'John';
+      //   const self = this;
+      //   setTimeout(function greet() {
+      //     Log(self);
+      //     Log(`Hello, my name is ${self.name}`); 
+      //   }, 1000);
+      // }
+      // const user = new User();
+
+      // function User() {
+      //   this.name = 'John';
+      //   setTimeout(function greet(self) {
+      //     Log(self);
+      //     Log(`Hello, my name is ${self.name}`); 
+      //   }, 1000, this);
+      // }
+      // const user = new User();
+
+      // function User() {
+      //   this.name = 'John';
+      //   setTimeout(() => {
+      //     Log(this);
+      //     Log(`Hello, my name is ${this.name}`); 
+      //   }, 1000);
+      // }
+      // const user = new User();
+    </script>
+    <script>
+      // function foo() {
+      //   Log(this);
+      //   Log(this.a);
+      // }
+      // let a = 2;
+      // // var a = 2;
+      // foo();
+
+      // let obj1= {
+      //   a: 1,
+      //   foo
+      // };
+
+      // obj1.foo();
+    </script>
+    <script>
+      // 模拟new操作符
+      // function New(Constructor, ...args){
+      //   let obj = {};
+      //   Object.setPrototypeOf(obj, Constructor.prototype);
+      //   return Constructor.apply(obj, args) || obj;
+      // }
+
+      // function Foo(a){
+      //     this.a = a;
+      // }
+
+      // Log(New(Foo, 1));
+      // 创建一个空对象 obj;
+      // 将新创建的空对象的隐式原型指向其构造函数的显示原型。
+      // 使用 call 改变 this 的指向
+      // 如果无返回值或者返回一个非对象值，则将 obj 返回作为新对象；如果返回值是一个新对象的话那么直接直接返回该对象。
+    </script>
+    <script>
+      // new 绑定 > 显式绑定
+      // function foo(a) {
+      //     this.a = a;
+      // }
+
+      // let obj1 = {};
+
+      // let bar = foo.bind(obj1);
+      // bar(2);
+      // Log(obj1);
+
+      // let obj2 = new bar(3);
+      // Log(obj1);
+      // Log(obj2);
+
+      // 「new 绑定」 > 「显式绑定」 > 「隐式绑定」 > 「默认绑定」
+    </script>
+    <script>
+      const boss = {
+        name: 'boss',
+        returnThis () {
+          return this
+        }
+      };
+      Log(boss.returnThis() === boss);
+
+      const boss1 = {
+        name: 'boss1',
+        returnThis () {
+          return boss.returnThis();
+        }
+      };
+      Log(boss1.returnThis());
+
+      const boss2 = {
+        name: 'boss2',
+        returnThis() {
+          const returnThis = boss.returnThis; // function returnThis() {return this}
+          return returnThis();
+        }
+      };
+      Log(boss2.returnThis());
+
+      const boss3 = {
+        name: 'boss3',
+        returnThis: boss.returnThis // function returnThis() {return this}
+      }
+      Log(boss3.returnThis());
+    </script>
+  </body>
+</html> 
