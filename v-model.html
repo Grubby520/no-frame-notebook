@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <p id="show"></p>
+    <input type="text" id="root" value="">
+    <script>
+        let value = 'lilei'
+        let composing = false
+        const $root = document.getElementById('root')
+        $root.addEventListener('input', onInput)
+        $root.addEventListener('compositionstart', onCompositionstart)
+        $root.addEventListener('compositionend', onCompositionend)
+        initValue($root, value)
+
+        function onInput(ev) {
+            if (composing) {
+                return
+            }
+            value = ev.target.value
+            updateValue('#show', value)
+        }
+        function onCompositionstart() {
+            composing = true
+        }
+        function onCompositionend(ev) {
+            composing = false;
+            onInput(ev);
+        }
+        function updateValue(id, value) {
+            document.querySelector(id).innerHTML = value
+        }
+        function initValue(dom, value) {
+            dom.value = value
+            updateValue('#show', value)
+        }
+    </script>
+</body>
+
+</html>
