@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Array</title>
+</head>
+
+<body>
+    <script>
+        /**
+         * Array.from(arrayLike[, mapFn[, thisArg]])
+         * 伪数组对象（拥有一个 length 属性和若干索引属性的任意对象）/ 可迭代对象（可以获取对象中的元素,如 Map和 Set 等）
+         * 返回浅拷贝的数组实例
+         */
+        Array.from('array')
+        Array.from(new Set(['foo', 'bar', 'baz', 'foo']))
+        Array.from(new Map([[1, 2], [2, 4], [4, 8]]).values())
+        Array.from({ '1': 1, 'name': 'zhangsan', length: 4 })
+        Array.from([1, 2, 3], (item, i) => item * i)
+
+        /**
+         * Array.isArray(obj)
+         * 如果值是 Array，则为true; 否则为fals
+         */
+        Array.isArray([])
+        Array.isArray({})
+
+        /**
+         * Array.of(element0[, element1[, ...[, elementN]]])
+         * 创建一个具有可变数量参数的新数组实例，而不考虑参数的数量或类型
+         * 
+         */
+        if (!Array.of) {
+            Array.of = function () {
+                return Array.prototype.slice.call(arguments);
+            };
+        }
+        Array.of(7)
+        Array.of(1, 2, 3)
+        /**
+         * Array.of(element0[, element1[, ...[, elementN]]])
+         * 创建一个具有可变数量参数的新数组实例，而不考虑参数的数量或类型
+         */
+
+    </script>
+</body>
+
+</html>

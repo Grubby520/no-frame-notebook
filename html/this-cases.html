@@ -1,9 +1,10 @@
 <html>
-  <body>
+
+<body>
     <script>
-      function Log(back) {
-        console.log(back)
-      }
+        function Log(back) {
+            console.log(back)
+        }
     </script>
     <script>
       // let length1 = 10;
@@ -223,36 +224,37 @@
       // 「new 绑定」 > 「显式绑定」 > 「隐式绑定」 > 「默认绑定」
     </script>
     <script>
-      const boss = {
-        name: 'boss',
-        returnThis () {
-          return this
-        }
-      };
-      Log(boss.returnThis() === boss);
+        const boss = {
+            name: 'boss',
+            returnThis() {
+                return this
+            }
+        };
+        Log(boss.returnThis() === boss);
 
-      const boss1 = {
-        name: 'boss1',
-        returnThis () {
-          return boss.returnThis();
-        }
-      };
-      Log(boss1.returnThis());
+        const boss1 = {
+            name: 'boss1',
+            returnThis() {
+                return boss.returnThis();
+            }
+        };
+        Log(boss1.returnThis());
 
-      const boss2 = {
-        name: 'boss2',
-        returnThis() {
-          const returnThis = boss.returnThis; // function returnThis() {return this}
-          return returnThis();
-        }
-      };
-      Log(boss2.returnThis());
+        const boss2 = {
+            name: 'boss2',
+            returnThis() {
+                const returnThis = boss.returnThis; // function returnThis() {return this}
+                return returnThis();
+            }
+        };
+        Log(boss2.returnThis());
 
-      const boss3 = {
-        name: 'boss3',
-        returnThis: boss.returnThis // function returnThis() {return this}
-      }
-      Log(boss3.returnThis());
+        const boss3 = {
+            name: 'boss3',
+            returnThis: boss.returnThis // function returnThis() {return this}
+        }
+        Log(boss3.returnThis());
     </script>
-  </body>
-</html> 
+</body>
+
+</html>
