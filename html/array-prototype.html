@@ -39,10 +39,285 @@
         }
         Array.of(7)
         Array.of(1, 2, 3)
+
+        // ------------- Array.prototype ------------------ //
         /**
-         * Array.of(element0[, element1[, ...[, elementN]]])
-         * 创建一个具有可变数量参数的新数组实例，而不考虑参数的数量或类型
+         * new_array = old_array.concat(value1[, value2[, ...[, valueN]]])
+         * @param valueN 数组和/或值，将被合并到一个新的数组中
+         * 入参的值是对象引用还是基本数据类型
+         * @returns 浅拷贝
          */
+        const arr1 = [1, 2, 3]
+        const arr2 = arr1.concat() // 值是基本类型（string, number, boolean...），原始数组和新数组不相互影响
+
+        const arr3 = [{ id: 1, label: 'zhangsan' }]
+        const arr4 = arr3.concat(arr3, 4, 5, [6, 7]) // arr3的值，是对象引用，原始数组和新数组都引用想通的对象
+
+        const obj5 = { id: 2, label: 'lisi' }
+        arr5 = arr4.concat(obj5) // 类似push，但不修改原数组，创建新数组
+
+        /**
+         * arr.copyWithin(target[, start[, end]])
+         * 用来把某些个位置的元素复制并覆盖到其他位置上去，操作数组本身
+         */
+        const arr1 = [0, 1, 2, 3]
+        arr1.copyWithin(0, arr1.length - 1) // 用最后一个值去覆盖第一个值
+
+        /**
+         * arr.entries()
+         * @returns 新的Array Iterator迭代器对象
+         */
+        // 二维数组排序
+        const arr1 = [[1, 2], [20, 1, 1, 3, 2]]
+        function sortArr(arr) {
+            let goNext = true
+            const entries = arr.entries()
+            while (goNext) {
+                const result = entries.next()
+                if (result.done) {
+                    goNext = false
+                } else {
+                    result.value[1].sort((a, b) => a - b)
+                }
+            }
+            return arr
+        }
+        sortArr(arr1) // arr1已经被改变（函数入参是指的引用，怎么改变了参数本身，哈哈?）
+
+        // -------- 判断条件 --------- //
+        /**
+         * arr.every(callback(element[, index[, array]])[, thisArg])
+         * 找到第一个返回falsy的元素，立即跳出循环 / 不会调用未被赋值或被删除的索引 / 传入空数组，返回true
+         * @return { Boolean } true / false
+         */
+        const arr1 = [0, , 1, 2, 3]
+        arr1.every((el, index, arr) => el < 2) // true
+        arr1.every((el, index, arr) => el < 3) // false
+        Array().every((el, index, arr) => el < 2) // true
+
+        /**
+         * arr.some(callback(element[, index[, array]])[, thisArg])
+         * 测试数组中是不是至少有1个元素通过了被提供的函数测试，立即跳出循环 / 空数组直接返回 false
+         * @returns {Boolean} true / false
+         */
+        const arr1 = [0, , 1, 2, 3]
+        arr1.some((el, index, arr) => el > 2) // true
+        arr1.some((el, index, arr) => el > 3) // false
+        Array().some((el, index, arr) => el > 3) // false
+
+        /**
+         * arr.find(callback[, thisArg])
+         * 返回数组中满足提供的测试函数的第一个元素的值，立即跳出循环 / 找不到则返回 undefined
+         */
+        const arr1 = [0, 1, 2, 3]
+        arr1.find((el, index, arr) => el === 2) // 2
+        arr1.find((el, index, arr) => el === 5) // undefined
+
+        /**
+         * arr.findIndex(callback[, thisArg])
+         * 返回数组中满足提供的测试函数的第一个元素的索引，立即跳出循环 / 找不到则返回 -1
+         */
+        const arr1 = [0, , 1, 2, 3]
+        arr1.findIndex((el, index, arr) => el === 2) // 3
+        arr1.findIndex((el, index, arr) => el === 4) // -1
+
+        /**
+         * arr.indexOf(callback[, thisArg])
+         * 返回在数组中可以找到一个给定元素的第一个索引，立即跳出循环 / 找不到则返回 -1 (String 也有indexOf)
+         * ps: 使用 strict equality 进行判断 (=== / triple-equals操作符)
+         */
+        const arr1 = [0, , 1, 2, 3]
+        arr1.indexOf(2) // 3
+        arr1.indexOf('2') // -1
+        arr1.indexOf(2, 2) // -1
+        // 找出指定元素出现的所有位置
+        const arr2 = [2, 3, 5, 2, 1, 3]
+        function IndexArr(arr, el) {
+            const result = []
+            let idx = arr.indexOf(el)
+            while (idx !== -1) {
+                result.push(idx)
+                idx = arr.indexOf(el, idx + 1)
+            }
+            return result
+        }
+        IndexArr(arr2, 2) // [0, 3]
+
+        /**
+         * arr.includes(valueToFind[, fromIndex])
+         * 判断一个数组是否包含一个指定的值
+         * @returns {Boolean}
+         */
+        const arr1 = [0, 1, 2, 3]
+        arr1.includes(2) // true
+        arr1.includes(2, 2) // true
+        arr1.includes(0, 1) // false
+
+        // -------- 循环遍历 --------- //
+        /**
+         * var newArray = arr.filter(callback(element[, index[, array]])[, thisArg])
+         * 每个元素都会调用一次cb
+         * 返回一个新的、由通过测试的元素组成的数组 / 如果没有任何数组元素通过测试，则返回空数组
+         * Note sameValueZero算法进行判断，基本数据类型时使用
+         * @returns {Array} 浅拷贝
+         */
+        const arr1 = [{ id: 1 }, { id: 2 }, { id: 3 }]
+        const newArr = arr1.filter((el, index, arr) => el.id < 2) // 值是引用类型，都是浅拷贝
+        arr1[0].id = '1' // newArr [{id: "1"}]
+        newArr[0].id = '11' // arr1 [{id: "11"}, { id: 2 }, { id: 3 }]
+
+        /**
+         * arr.forEach(callback(currentValue [, index [, array]])[, thisArg])
+         * 按升序为数组中含有效值的每一项执行一次 callback 函数，那些已删除或者未初始化的项将被跳过（稀疏数组）
+         * @returns undefind
+         */
+        // 1.一定是升序
+        const arr1 = [{ id: 1 }, { id: 2 }, { id: 3 }]
+        arr1.forEach((el, index, arr) => console.log(el.id)) // 1 2 3
+        // 2.遍历的范围在最开始就已经确定
+        // 2.1 已经开始调用forEach后，添加到数组中的项不会被cb访问
+        const arr1 = [{ id: 1 }, { id: 2 }, { id: 3 }]
+        arr1.forEach((el, index, arr) => { // 1 2 3
+            console.log(el.id)
+            if (el.id === 3) {
+                arr.push({ id: 4 })
+            }
+        })
+        // 2.2 已删除的项不会被遍历到
+        const arr1 = [{ id: 1 }, { id: 2 }, { id: 3 }]
+        arr1.forEach((el, index, arr) => { // 1 2
+            console.log(el.id)
+            if (el.id === 1) {
+                arr.splice(arr1.length - 1, 1)
+            }
+        })
+        // 2.3 删除已访问的元素，之后的元素就会被跳过
+        const arr1 = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }]
+        arr1.forEach((el, index, arr) => {
+            console.log(index) // 0 1 2 下标执行顺序不变
+            console.log(el.id) // 1 2 4 (id: 3的下标为2，被跳过)
+            if (el.id === 2) {
+                arr.splice(0, 1)
+            }
+        })
+        // 3.无法终止或跳出循环
+        // 3.1 除非抛出异常 try catch
+        const arr1 = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }]
+        try {
+            arr1.forEach((el, index, arr) => {
+                console.log(el.id) // 1 2
+                if (el.id === 2) {
+                    // return;
+                    // break;
+                    throw new Error('return')
+                }
+            })
+        } catch (e) {
+            console.log(e) // return
+        }
+        // 3.2 推荐使用 every, some, find, findIndex
+        const arr1 = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }]
+        arr1.every((value, index, array) => {
+            if (value.id === 2) {
+                return true // 跳出循环
+            } else {
+                console.log(value.id) // 1
+            }
+        })
+        // 3.3 根据场景，增加新数组的话，还可以filter + forEach
+        const arr1 = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }]
+        const newArr = arr1.filter((value, index, array) => value.id < 2) // 浅拷贝
+        newArr.forEach((el, index, arr) => { el.id = el.id * 2 }) // newArr [{id: 2}]
+        // 3.4 forEach始终返回undefined，所以不能链式调用
+        const arr1 = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }]
+        const newArr = arr1
+            .filter((value, index, array) => value.id < 2)
+            .forEach((el, index, arr) => { el.id = el.id * 2 }) // newArr undefined
+
+        /**
+         * arr.map(function callback(currentValue[, index[, array]]) {
+         *  // Return element for new_array
+         *  }[, thisArg])
+         * 创建一个新数组，其结果是该数组中的每个元素是调用一次提供的函数后的返回 / 没有return undefined
+         */
+        const arr1 = [{ id: 1 }, { id: 2 }, { id: 3 }]
+        const newArr = arr1.map((el, index, arr) => ({ value: el.id })) // 单行，建议加上 (); 多行，必须加 return
+        // 值是基本类型
+        const arr1 = [1, 2, , 3]
+        const newArr = arr1.map(item => item * item) // 1 4 9
+        // 纯字符串
+        const str = 'Hello World'
+        const newArr = Array.from(str).map(item => item.charCodeAt(0)) // 利用from，转成Array
+        const newArr = Array.prototype.map.call(str, item => item.charCodeAt(0))
+
+        /**
+         * var newArray = arr.flat([depth])
+         * 扁平化嵌套数组
+         * 按照一个可指定的深度递归遍历数组，并将所有元素与遍历到的子数组中的元素
+         * @returns {Array}
+         */
+        const arr = [0, 1, 2, [[[3, 4]]]]
+        const newArr = arr.flat(2) // [0, 1, 2, [3, 4]]
+        const newArr = arr.flat(3) // [0, 1, 2, 3, 4]
+        // 1.实现 reduce + concat
+        // waiting
+
+        /**
+         * var new_array = arr.flatMap(function callback(currentValue[, index[, array]]) {
+         *      // return element for new_array
+         *  }[, thisArg])
+         */
+
+        // ------------- 增删改 -------- //
+        /**
+         * arr.push(element1, ..., elementN)
+         * 从末尾添加
+         * 将一个或多个元素添加到数组的末尾，并返回该数组的新长度 / 任何元素都可以
+         * @returns {Number}
+         */
+        const arr1 = [0, 1, 2, 3]
+        arr1.push() // length 4
+        arr1.push(4, '5', [6], { id: 7 }, undefined, null, true) // length 11
+
+        /**
+         * arr.shift()
+         * 删除第一个元素
+         * @returns {any} 返回第一个元素
+         */
+        const arr1 = [0, 1, 2, 3]
+        arr1.shift() // 0
+
+        /**
+         * arr.unshift(element1, ..., elementN)
+         * 从头部添加一个或多个元素
+         * @returns {Number} 返回数组的长度
+         */
+        const arr1 = [0, 1, 2, 3]
+        arr1.unshift(-2, -1) // 6
+
+        /**
+         * array.splice(start[, deleteCount[, item1[, item2[, ...]]]])
+         * 删除，添加，替换元素
+         * @returns {Array} 返回被删除的元素 / 空数组
+         */
+        const arr1 = [0, 1, 2, 3]
+        arr1.splice(1) // arr1 [0] 从下标1开始，删除后面全部的元素 return [1, 2, 3]
+        arr1.splice(1, 0) // arr1 [0, 1, 2, 3] 不做任何处理 return []
+        arr1.splice(1, 1) // arr1 [0, 2, 3] 从下标1开始，删除一个元素 return [1]
+        arr1.splice(1, 2) // arr1 [0, 3] 从下标1开始，删除二个元素 return [1, 2]
+        arr1.splice(1, 0, '1') // arr1 [0, '1', 1, 2, 3] 从下标1开始，不删除元素，插入一个元素 return []
+        arr1.splice(1, 1, '1', '2') // arr1 [0, '1', '2', 2, 3] 从下标1开始，删除一个元素，插入二个元素 return [1]
+
+        /**
+         * arr.slice([begin[, end]])
+         * 截取数组，从begin下标开始，到end下标结束（不包含end），浅拷贝
+         * @returns {Array} 返回新的浅拷贝的数组
+         */
+        const arr1 = [{ id: 1 }, { id: 2 }, { id: 3 }]
+        const newArr = arr1.slice() // 全量浅拷贝
+        const newArr = arr1.slice(0) // 全量浅拷贝
+        const newArr = arr1.slice(0, 2) // [{ id: 1 }, { id: 2 }] 0开始，(2-1)结束
+        newArr[0].id = '1' // newArr和arr1同步改变
 
     </script>
 </body>
