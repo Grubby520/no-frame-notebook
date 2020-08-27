@@ -276,7 +276,56 @@
          */
         const arr = [0, 1, 2, [[[3, 4]]]]
         const newArr = arr.flat(2) // [0, 1, 2, [3, 4]]
-        const newArr = arr.flat(3) // [0, 1, 2, 3, 4]
+        const newArr = arr.flat(Infinity) // [0, 1, 2, 3, 4]
+        // reduce + concat + isArray + recursivity === flat
+
+        const arr = [1, 2, 3, [1, 2, 3, 4, [2, 3, 4]]]
+        function flatDeep(arr, deep = 1) {
+            if (deep > 0) {
+                return arr.reduce((acc, cur) => {
+                    // 递归，直到不是数组
+                    if (Array.isArray(cur)) {
+                        return acc.concat(flatDeep(cur, deep - 1))
+                    } else {
+                        return acc.concat(cur)
+                    }
+                }, [])
+            } else {
+                return arr.slice() // 浅拷贝
+            }
+        }
+        // 精简一下
+        const arr = [1, 2, 3, [1, 2, 3, 4, [2, 3, 4]]]
+        function flatDeep(arr, deep = 1) {
+            return deep > 0 ? arr.reduce((acc, cur) => acc.concat(Array.isArray(cur) ? flatDeep(cur, deep - 1) : cur), []) : arr.slice()
+        }
+        flatDeep(arr, Infinity)
+        flatDeep(arr, 1)
+
+        // stack(pop + push + ...rest + reverse) === flat
+        const arr = [1, 2, 3, [1, 2, 3, 4, [2, 3, 4]]]
+        function flatten(arr, deep = 1) {
+            // pop + push VS shift + unshift, 末端的数组OPs更快
+            const stack = [...arr] // shallow copy
+            const result = []
+            while (stack.length) {
+                const next = stack.pop() // 末尾解构
+                if (Array.isArray(next)) {
+                    stack.push(...next) // 一直解构赋值，直到不再是Array
+                } else {
+                    result.push(next)
+                }
+            }
+            return result.reverse()
+        }
+        flatten(arr)
+
+        /**
+         * var new_array = arr.flatMap(function callback(currentValue[, index[, array]]) {
+         *      // return element for new_array
+         *  }[, thisArg])
+         */
+
         // 1.实现 reduce + concat
         // waiting
 
@@ -315,12 +364,6 @@
             }
             return names
         }, [])
-
-        /**
-         * var new_array = arr.flatMap(function callback(currentValue[, index[, array]]) {
-         *      // return element for new_array
-         *  }[, thisArg])
-         */
 
         // ------------- 增删改 -------- //
         /**
@@ -405,6 +448,21 @@
         const newArr = arr1.fill('Ljiang', 2, 2) // ["Fire", empty, undefined, null, "Air", "Water"]
         // 当一个对象被传递给 fill方法的时候, 填充数组的是这个对象的引用
         [].fill.call({ length: 3 }, 4) // {0: 4, 1: 4, 2: 4, length: 3}
+
+        // ------------------ 排序 ------------------------- //
+        /**
+         * arr.reverse()
+         * 颠倒数组
+         * @return {Array}
+         */
+        const arr1 = ['Fire', , undefined, null, 'Air', 'Water']
+        const newArr = arr1.reverse() // ["Water", "Air", null, undefined, empty, "Fire"]
+
+
+
+        // void
+        null == void 0
+        undefined === void 0
 
     </script>
 </body>
