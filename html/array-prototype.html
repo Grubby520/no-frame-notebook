@@ -45,7 +45,7 @@
          * new_array = old_array.concat(value1[, value2[, ...[, valueN]]])
          * @param valueN 数组和/或值，将被合并到一个新的数组中
          * 入参的值是对象引用还是基本数据类型
-         * @return 浅拷贝
+         * @return shallow copy
          */
         const arr1 = [1, 2, 3]
         const arr2 = arr1.concat() // 值是基本类型（string, number, boolean...），原始数组和新数组不相互影响
@@ -177,7 +177,7 @@
          * 每个元素都会调用一次cb
          * 返回一个新的、由通过测试的元素组成的数组 / 如果没有任何数组元素通过测试，则返回空数组
          * Note sameValueZero算法进行判断，基本数据类型时使用
-         * @return {Array} 浅拷贝
+         * @return {Array} shallow copy
          */
         const arr1 = [{ id: 1 }, { id: 2 }, { id: 3 }]
         const newArr = arr1.filter((el, index, arr) => el.id < 2) // 值是引用类型，都是浅拷贝
@@ -244,7 +244,7 @@
         })
         // 3.3 根据场景，增加新数组的话，还可以filter + forEach
         const arr1 = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }]
-        const newArr = arr1.filter((value, index, array) => value.id < 2) // 浅拷贝
+        const newArr = arr1.filter((value, index, array) => value.id < 2) // shallow copy
         newArr.forEach((el, index, arr) => { el.id = el.id * 2 }) // newArr [{id: 2}]
         // 3.4 forEach始终返回undefined，所以不能链式调用
         const arr1 = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }]
@@ -291,7 +291,7 @@
                     }
                 }, [])
             } else {
-                return arr.slice() // 浅拷贝
+                return arr.slice() // shallow copy
             }
         }
         // 精简一下
@@ -453,11 +453,28 @@
         /**
          * arr.reverse()
          * 颠倒数组
-         * @return {Array}
+         * @return {Array} 返回新数组
          */
         const arr1 = ['Fire', , undefined, null, 'Air', 'Water']
         const newArr = arr1.reverse() // ["Water", "Air", null, undefined, empty, "Fire"]
 
+        /**
+         * arr.sort([compareFunction])
+         * 数组本身也会排序
+         * ps: 默认，元素按照转换为的字符串的各个字符的Unicode位点进行排序,数字会转成字符串
+         * 
+         * @return {Array} 返回新数组
+         */
+        // 基本类型
+        const arr1 = [1, 30, 4, 21, 100000]
+        const newArr = arr1.sort() // [1, 100000, 21, 30, 4] // shallow copy
+        arr.sort((a, b) => a - b)
+        // 引用类型
+        const objArr = [
+            { id: 2, label: 'zs' },
+            { id: 1, label: 'ls' },
+        ]
+        objArr.sort((a, b) => a.id - b.id)
 
 
         // void
