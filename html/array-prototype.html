@@ -9,47 +9,66 @@
 
 <body>
     <script>
-        /**
-         * Array.from(arrayLike[, mapFn[, thisArg]])
-         * 伪数组对象（拥有一个 length 属性和若干索引属性的任意对象）/ 可迭代对象（可以获取对象中的元素,如 Map和 Set 等）
-         * 返回浅拷贝的数组实例
-         */
-        // 字符串 
-        const arr = 'array'
-        // Strings,Arrays,Maps,Sets，Arguments Object,Generators等都是可迭代的数据结构
-        for (const a of arr) { console.log(a) }
-        Array.from(arr) // ["a", "r", "r", "a", "y"]
-        // Set
-        Array.from(new Set(['foo', 'bar', 'baz', 'foo'])) // ['foo', 'bar', 'baz', 'foo']
-        // Map
-        Array.from(new Map([[1, 2], [2, 4], [4, 8]]).values()) // [2, 4, 8]
-        // 伪数组对象
-        Array.from({ '1': 1, 'name': 'zhangsan', length: 4 }) // [undefined, 1, undefined, undefined]
-        // 利用map对值做处理
-        Array.from([1, 2, 3], (item, i) => item * i) // [0, 2, 6]
-        // iterator对象
-        Array.from([20, 1, 1, 3, 2].values()) // [20, 1, 1, 3, 2]
 
+        // -------------------------- syntax -------------------------- //
         /**
-         * Array.isArray(obj)
-         * 如果值是 Array，则为true; 否则为fals
-         */
-        Array.isArray([]) // true
-        Array.isArray({}) // false
+        * [element0, element1, ..., elementN]
+        * new Array(element0, element1[, ...[, elementN]])
+        * new Array(arrayLength)
+        
+        1、 类列表对象
+        2、数组的长度和元素类型都是非固定的
+        3、它的数据在内存中可以不连续，不一定是密集型，属于稀疏型
+        4、数组元素的索引，只能是整数，不能是字符串
+        5、索引是字符串的，被称为关联数组
+        6、使用非整数并通过方括号或点号来访问或设置数组元素时，所操作的并不是数组列表中的元素，而是数组对象的属性集合上的变量
+        7、数组对象的属性和数组元素列表是分开存储的 // [1, sd: 22] todo: (0: 1)是元素列表; (sd: 22)是对象的属性
+        */
 
-        /**
-         * Array.of(element0[, element1[, ...[, elementN]]])
-         * 创建一个具有可变数量参数的新数组实例，而不考虑参数的数量或类型
-         * ps: 与Array构造函数的区别，在于参数传数字
-         * 
-         */
-        if (!Array.of) {
-            Array.of = function () {
-                return Array.prototype.slice.call(arguments);
-            };
+
+        {
+            /**
+            * Array.from(arrayLike[, mapFn[, thisArg]])
+            * 伪数组对象（拥有一个 length 属性和若干索引属性的任意对象）/ 可迭代对象（可以获取对象中的元素,如 Map和 Set 等）
+            * 返回浅拷贝的数组实例
+            */
+            // 字符串 
+            const arr = 'array'
+            // Strings,Arrays,Maps,Sets，Arguments Object,Generators等都是可迭代的数据结构
+            for (const a of arr) { console.log(a) }
+            Array.from(arr) // ["a", "r", "r", "a", "y"]
+            // Set
+            Array.from(new Set(['foo', 'bar', 'baz', 'foo'])) // ['foo', 'bar', 'baz', 'foo']
+            // Map
+            Array.from(new Map([[1, 2], [2, 4], [4, 8]]).values()) // [2, 4, 8]
+            // 伪数组对象
+            Array.from({ '1': 1, 'name': 'zhangsan', length: 4 }) // [undefined, 1, undefined, undefined]
+            // 利用map对值做处理
+            Array.from([1, 2, 3], (item, i) => item * i) // [0, 2, 6]
+            // iterator对象
+            Array.from([20, 1, 1, 3, 2].values()) // [20, 1, 1, 3, 2]
+
+            /**
+            * Array.isArray(obj)
+            * 如果值是 Array，则为true; 否则为fals
+            */
+            Array.isArray([]) // true
+            Array.isArray({}) // false
+
+            /**
+            * Array.of(element0[, element1[, ...[, elementN]]])
+            * 创建一个具有可变数量参数的新数组实例，而不考虑参数的数量或类型
+            * ps: 与Array构造函数的区别，在于参数传数字
+            * 
+            */
+            if (!Array.of) {
+                Array.of = function () {
+                    return Array.prototype.slice.call(arguments);
+                };
+            }
+            Array.of(7) // [7]
+            Array.of(1, 2, 3) // [1, 2, 3]
         }
-        Array.of(7) // [7]
-        Array.of(1, 2, 3) // [1, 2, 3]
 
         // -------------------------- Array.prototype ------------------------------- //
         /**
@@ -290,7 +309,7 @@
                 console.log(value.id) // 1
             }
         })
-        // 3.3 根据场景，增加新数组的话，还可以filter + forEach
+        // 3.3 根据场景，创建新数组的话，还可以filter + forEach
         const arr = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }]
         const newArr = arr.filter((value, index, array) => value.id < 2) // shallow copy
         newArr.forEach((el, index, arr) => { el.id = el.id * 2 }) // newArr [{id: 2}]
@@ -304,7 +323,8 @@
          * arr.map(function callback(currentValue[, index[, array]]) {
          *  // Return element for new_array
          *  }[, thisArg])
-         * 创建一个新数组，其结果是该数组中的每个元素是调用一次提供的函数后的返回 / 没有return undefined
+         * 创建一个新数组，其结果是该数组中的每个元素是调用一提供的函数后的返回 / 没有return undefined
+         * @return {Array} (shallow copy)
          */
         const arr = [{ id: 1 }, { id: 2 }, { id: 3 }]
         const newArr = arr.map((el, index, arr) => ({ value: el.id })) // 单行，建议加上 (); 多行，必须加 return
@@ -377,7 +397,7 @@
         const arr = ["it's Sunny in", "", "California"]
         arr.map(item => item.split(' '))
         arr.flatMap(item => item.split(' ')) // 会把每次cb的结果concat到一起
-        // 2.实现增加删除等操作
+        // 2.实现增加删除等操作,concat一个空数组
         const numList = [5, 4, -3, 20, 17, 0, -33, -4, 18]
         numList.flatMap(num => num >= 0 ? num % 2 === 0 ? [num] : [num - 1, 1] : []) // [4, 1, 4, 20, 16, 1, 0, 18]
         // 1.实现 reduce + concat
@@ -390,12 +410,12 @@
          * ps: 关于第一次执行取值问题，如果提供了initialValue，accumulator取值为initialValue，currentValue取arr的第一个值;
          * 如果没有提供initialValue，accumulator取值为arr的第一个值，currentValue取arr的第二个值;
          * todo: 没有提供initialValue，可能会引入TypeError
-         * 核心：保持acc的类型不变的原则，需要什么类型就定义什么类型
-         * @return {Array}
+         * 核心：保持accumulator的类型不变的原则，需要什么类型就定义什么类型
+         * @return {any}
          */
         const arr = [{ id: 1 }, { id: 2 }, { id: 3 }]
         // NaN的场景
-        const idsCount = arr.reduce((acc, cur) => acc.id + cur.id) // acc第二次执行时，已经是Number，不再是Object
+        const idsCount = arr.reduce((acc, cur) => acc.id + cur.id) // acc第二次执行时，类型是Number，不再是Object
         // 处理技巧1
         const idsCount = arr.reduce((acc, cur) => acc + cur.id, 0)
         // 处理技巧2
@@ -403,6 +423,7 @@
         // 计算数组中每个元素出现的次数
         const names = ['Alice', 'Bob', 'Tiff', 'Bob', 'Alice']
         const countedNames = names.reduce((allNames, name) => { // {Alice: 2, Bob: 2, Tiff: 1}
+            // 定义类型为Object,做值的累加
             if (name in allNames) {
                 allNames[name]++
             } else {
@@ -470,7 +491,7 @@
         /**
          * arr.slice([begin[, end]])
          * 截取数组，从begin下标开始，到end下标结束（不包含end），浅拷贝
-         * @return {Array} 返回新的浅拷贝的数组
+         * @return {Array} (shallow copy)
          */
         const arr = [{ id: 1 }, { id: 2 }, { id: 3 }]
         const newArr = arr.slice() // 全量浅拷贝
@@ -501,6 +522,7 @@
         const arr = ['Fire', , undefined, null, 'Air', 'Water']
         const str = arr.join() // "Fire,,,,Air,Water"
         const str = arr.join('-') // "Fire----Air-Water"
+        const str = arr.filter(val => val).join('-') // "Fire-Air-Water"
 
         /**
          * arr.toString()
@@ -513,7 +535,8 @@
         arr.filter(arr => arr).toString() // "Fire,Air,Water"
         // 对象数组 / 对象
         [{ a: 1 }].toString() // "[object Object]"
-            ({ a: 1 }).toString() // "[object Object]"
+        const temp = { a: 1 }
+        temp.toString() // "[object Object]"
 
         /**
          * arr.toLocaleString()
@@ -528,12 +551,12 @@
         // ------------------ 排序 ------------------------- //
         /**
          * arr.reverse()
-         * 颠倒数组
-         * @return {Array} 返回新数组
+         * 颠倒数组,不接受参数，修改数组本身
+         * @return {Array}
          */
         const arr = ['Fire', , undefined, null, 'Air', 'Water']
         const newArr = arr.reverse() // ["Water", "Air", null, undefined, empty, "Fire"]
-
+        newArr === arr // true
         /**
          * arr.sort([compareFunction])
          * 数组本身也会排序
