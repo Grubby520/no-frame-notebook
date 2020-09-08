@@ -11,7 +11,22 @@
     <script>
         // -------------------------- syntax -------------------------- //
         {
+            // 对象与原始数据类型之间的转换
+            // 1. Boolean
+            Boolean(new Object(Boolean(false))) // true
+            // 2. String
+            String(new Object('string'))
+            // 3. Number
+            Number(new Object(1))
 
+
+            // toString()
+            // valueOf()
+
+            // 查询对象的属性: . [] ()
+            // step1: 解析点左边的表达式，如果是undefined/null，直接报错
+            // setp2: 解析点左边的表达式，如果不是对象，就会转换成对象
+            // setp3: 如果是点，直接返回对应的属性; 如果是扩展等，把表达式转成string，然后返回对应的属性
         }
 
         // -------------------------- Object方法 -------------------------- //
@@ -22,9 +37,346 @@
             1. 只能拷贝sources自身的且可枚举的属性到target上
             2. 后面的sources属性覆盖前面的属性
             3. 分配属性时，会使用源对象上的[[Get]]和目标对象的[[Set]]
-            * @return {Object} target
+            * @return {Object} target (shallow copy)
             */
+            const obj = { a: 1 }
+            const obj2 = { a: 2, b: 1 }
+            const newObj = Object.assign({}, obj, obj2) // {a: 2, b: 1}
+            // 属性的值是引用类型
+            const obj = { a: [] }
+            const obj2 = { a: 1, b: 1 }
+            Object.assign(obj2, obj)
+            obj.a.push(1) // arr和arr2同步更新
 
+
+            // equal
+
+
+            /**
+            * Object.create(proto[, propertiesObject])
+            * 创建一个新对象，使用现有的对象来提供新创建的对象的__proto__
+            * @return {Object} 
+            */
+            const obj = { a: 1, get: () => { return this.a } }
+            const newObj = Object.create(obj)
+            newObj.name = 'zhangsan'
+            newObj.__proto__  // {a: 1, get: ƒ} 原型链被修改
+            newObj.keys() // TypeError: newObj.keys is not a function
+
+            /**
+            * Object.entries(obj)
+            * 返回一个给定对象自身可枚举属性的键值对数组
+            1.与for-in遍历的顺序一致，但不会循环原型链上的属性
+            * @return {Array} 
+            */
+            const obj = { a: 1, get: () => { return this.a } }
+            const newObj = Object.entries(obj) // [["a", 1], ["get", ƒ]]
+            // string
+            Object.entries('string') // [["0", "s"], ["1", "t"]...]
+            // Map
+            new Map(Object.entries(obj)) // Map(2) {"a" => 1, "get" => ƒ}
+            // Polyfill
+            if (!Object.entries) {
+                Object.entries = function (obj) {
+                    const ownProps = Object.keys(obj),
+                        i = ownProps.length,
+                        resArr = new Array(i)
+                    while (i--) {
+                        resArr.push([[ownProps[i], obj[ownProps[i]]]])
+                    }
+                    return resArr
+                }
+            }
+
+            /**
+            * Object.freeze(obj)
+            * 冻结对象，使其不能再被修改
+            1. 不能添加新的属性，不能删除已有数据，不能修改属性的enumerable, writable, value, configurable
+            2. 原型也不能被修改
+            * @return {Object} 返回被冻结的对象，而不是它的副本
+            */
+            const obj = { a: 1, get: () => { return this.a } }
+            const newObj = Object.freeze(obj)
+            // 以下更改都不会生效
+            // PS: 'use strict' 会抛出 TypeErrors
+            obj.a = 11
+            obj.b = 1
+            delete obj.a
+            Object.defineProperty(obj, 'a', {
+                writable: false
+            })
+            Object.getOwnPropertyDescriptor(obj, 'a')
+            Object.isFrozen(obj) // true
+            // 1.冻结数组
+            const arr = [1]
+            Object.freeze(arr)
+            arr.push(1) // TypeError
+            // 2.浅冻结
+            const obj = { a: 1, arr: [], obj: {} }
+            Object.freeze(obj)
+            Object.isFrozen(obj) // 判断是否冻结
+            obj.arr.push('a')
+            obj.obj.a = 1
+            // 3.深冻结
+            function deepFreeze(obj) {
+                // 区分两者的区别
+                // const names = Object.keys(obj)
+                const names = Object.getOwnPropertyNames(obj)
+                for (const name of names) {
+                    if (typeof obj[name] === 'object' && obj[name] !== null) {
+                        deepFreeze(obj[name])
+                    }
+                }
+                return Object.freeze(obj)
+            }
+            const obj = { a: 1, arr: [], obj: {} }
+            deepFreeze(obj)
+            obj.arr.push('a')
+
+            /**
+            * Object.seal(obj)
+            * 密封对象
+            1. 不能添加新的属性，不能删除已有数据，属性标记为不可配置
+            2. 原型也不能被修改
+            3.当前属性可写的，还是可以改变
+            * @return {Object} 返回被密封的对象，而不是它的副本
+            */
+            const obj = { a: 1, arr: [] }
+            Object.defineProperty(obj, 'b', {
+                value: 2,
+                writable: false
+            })
+            Object.seal(obj)
+            Object.isSealed() // true
+            obj.a = 11
+            delete obj.a
+            obj.b = 22
+            obj // {a: 11, arr: Array(0), b: 2}
+
+            /**
+            * Object.fromEntries(iterable)
+            * 把可迭代对象的键值对值组装成一个对象
+            * @return {Object}
+            */
+            // Object
+            const obj = { a: 1, arr: [] }
+            const obj1 = Object.entries(obj)
+            const newObj = Object.fromEntries(obj1)
+            // Map
+            const obj2 = new Map(obj1)
+            const newObj = Object.fromEntries(obj2)
+            // Array
+            const obj = [["a", 1], ["arr", []]]
+            const newObj = Object.fromEntries(obj)
+
+            /**
+            * Object.getOwnPropertyDescriptor(obj, prop)
+            * 查看obj的prop属性 - property descriptor
+            * @return {Object} property descriptor / undefined
+            */
+            // 数据属性
+            const obj = { a: 1, arr: [] }
+            Object.getOwnPropertyDescriptor(obj, 'a') // {value: 1, writable: true, enumerable: true, configurable: true}
+            Object.defineProperty(obj, 'a', {
+                writable: false
+            })
+            Object.getOwnPropertyDescriptor(obj, 'a') // {value: 1, writable: false, enumerable: true, configurable: true}
+            obj.a = 2
+            obj.a // 1
+
+            // 访问器属性
+            const obj = { a: 1 }
+            Object.defineProperty(obj, '_a', {
+                get: function () {
+                    return this.a
+                },
+                set: function (value) {
+                    this.a = Number(value) + 1
+                }
+            })
+            Object.getOwnPropertyDescriptor(obj, '_a') // {enumerable: false, configurable: false, get: ƒ, set: ƒ}
+            obj._a = 1
+            obj.a // 2
+
+            /**
+            * Object.getOwnPropertyDescriptors(obj)
+            * 查看obj的所有自身属性的描述符
+            * @return {Object} property descriptor / undefined
+            */
+            // 数据属性
+            const obj = { a: 1, arr: [] }
+            Object.getOwnPropertyDescriptors(obj) // {a: {...}, arr: {...}}
+
+            // 访问器属性
+            const obj = { a: 1 }
+            Object.defineProperty(obj, '_a', {
+                get: function () {
+                    return this.a
+                },
+                set: function (value) {
+                    this.a = Number(value) + 1
+                }
+            })
+            Object.getOwnPropertyDescriptors(obj) // {a: {...}, _a: {...}}
+
+            /**
+            * Object.getOwnPropertyNames(obj)
+            * 返回obj的所有自身属性的属性名（包括non-enumerable properties, 不包括use Symbol）/ []
+            * @return {string[]}
+            */
+            // Array
+            const arr = ['a', 'b']
+            Object.getOwnPropertyNames(arr) // ["0", "1", "length"]
+            // Array-like object
+            const obj = { 0: 'a', 1: 'b', name: 'c' }
+            Object.getOwnPropertyNames(obj) // ["0", "1", "name"]
+            // non-enumerable property
+            const obj = {}
+            Object.defineProperty(obj, 'a', {
+                value: 1,
+                enumerable: false
+            })
+            Object.getOwnPropertyDescriptor(obj, 'a') // {value: 1, writable: false, enumerable: false, configurable: false}
+            Object.getOwnPropertyNames(obj) // ["a"]
+            // Get non-enumerable properties only
+            // 1.利用getOwnPropertyNames和keys, 取两者的差集即可
+            const obj = { b: 1 }
+            Object.defineProperty(obj, 'a', {
+                value: 1,
+                enumerable: false
+            })
+            Object.getOwnPropertyNames(obj) // ["b", "a"]
+            Object.keys(obj) // ["b"]
+
+            /**
+            * Object.getOwnPropertySymbols(obj)
+            * 返回obj的所有自身use Symbol properties的数组 / 返回空[]
+            * @return {Symbol[]}
+            */
+            const obj = { a: 1 }
+            obj[Symbol('b')] = 'b'
+            Object.getOwnPropertyNames(obj) // ["a"]
+            Object.getOwnPropertySymbols(obj) // [Symbol(b)]
+
+            /**
+            * Object.getPrototypeOf(object)
+            * 返回指定对象的原型（内部[[Prototype]]属性的值）
+            * @return {Prototype / null} 
+            */
+            const proto = { a: 1 }
+            Object.getPrototypeOf(proto) === proto.__proto__ // true
+            Object.getPrototypeOf(proto) === Object.prototype // true
+            const obj = Object.create(proto)
+            Object.getPrototypeOf(obj) === proto // true
+
+            /**
+            * Object.is(value1, value2)
+            * 判断2个值是否是同一个值
+            1.与==运算不同，不会强制转行
+            2.与===运算不同，不会讲数字-0和+0视为相等，讲Number.NaN与NaN视为不相等
+            * @return {Boolean} 
+            */
+            const obj1 = { a: 1 }
+            const obj2 = obj1
+            const ob3 = { a: 1 }
+            Object.is(obj1, obj2) // true 同一个引用地址
+            Object.is(obj1, obj3) // false 不同引用地址
+            Object.is(undefined, undefined) // true
+            Object.is(null, null) // true
+            Object.is(undefined, null) // false
+            Object.is(true, true) // true
+            Object.is(true, false) // false
+            Object.is('foo', 'foo') // false
+            Object.is(+0, 0) // true
+            Object.is(NaN, NaN) // true
+
+            /**
+            * Object.keys(obj)
+            * 返回obj自身所有可枚举属性的字符串数组
+            * @return {string[]}
+            */
+            // objet
+            const obj = { b: 1 }
+            Object.defineProperty(obj, 'a', {
+                value: 1,
+                enumerable: false
+            })
+            Object.getOwnPropertyNames(obj) // ["b", "a"]
+            Object.keys(obj) // ["b"]
+            // simple array
+            const arr = ['a', 'b']
+            Object.keys(arr) // ["0", "1"]
+            Object.getOwnPropertyNames(arr) // ["0", "1", "length"]
+
+            /**
+            * Object.preventExtensions(obj)
+            将obj变得不可扩展
+            1.只是不能新增新的属性
+            2.已存在属性可做正常操作
+            * @return {object} obj
+            */
+            const obj = { b: 1 }
+            Object.isExtensible(obj) // true
+            Object.preventExtensions(obj) // {b: 1}
+            Object.isExtensible(obj) // false
+            obj.a = 1
+            delete obj.b
+            obj // {}
+
+            /**
+            * Object.isExtensible(obj)
+            判断obj是否可扩展
+            * @return {object} obj
+            */
+            const obj = { b: 1 }
+            Object.isExtensible(obj)
+            // 1.freeze
+            Object.freeze(obj)
+            Object.isExtensible(obj)
+            // 2.seal
+            Object.seal(obj)
+            Object.isExtensible(obj)
+            // 3.preventExtensions
+            Object.preventExtensions(obj)
+            Object.isExtensible(obj)
+
+        }
+
+        // -------------------------- Object.prototype -------------------------- //
+        {
+            /**
+            * obj.hasOwnProperty(prop)
+            * 检测对象是否含有特定的自身属性
+            1. 与in运算符不同，它会忽略原型链上继承的属性
+            2. 实时去查询是否有该属性
+            * @return {Boolean}
+            */
+            const obj = { a: 1 }
+            obj.hasOwnProperty('a') // true
+            obj.hasOwnProperty('toString') // false
+            obj.__proto__.hasOwnProperty('toString') // true
+            // 保险写法（如果对象本身占用了hasOwnProperty属性）
+            const obj = {
+                hasOwnProperty: function () {
+                    return false
+                },
+                a: 1
+            }
+            obj.hasOwnProperty('a') // false
+            Object.prototype.hasOwnProperty.call(obj, 'a') // true
+
+            /**
+            * prototypeObj.isPrototypeOf(object)
+            * 在object的原型链上搜索，是否有prototypeObj
+            1. 与instanceof运算符不同，它不是在object上检查，而是在object.prototype上检查，
+            * @return {Boolean}
+            */
+            function Bar() { }
+            function Baz() { }
+            Baz.prototype = Object.create(Bar.prototype)
+            const obj = new Baz()
+            Bar.prototype.isPrototypeOf(obj) // true
+            Baz.prototype.isPrototypeOf(obj) // true
         }
     </script>
 </body>
