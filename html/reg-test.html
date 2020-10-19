@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REG</title>
+</head>
+
+<body>
+    <input id="id1" type="text">
+    <input id="id2" type="text">
+    <script>
+        const $id1 = document.getElementById('id1')
+        function Listener($id, type) {
+            const value = $id.value
+            const reg = /^(-?\d*)/ // 包含负数
+            // const reg = /(\d*)/i // 不包含负数
+            let arr = value.match(reg)
+            let newValue = arr[0]
+            if (newValue && newValue !== '-') {
+                newValue = parseInt(newValue)
+            } else if (type === 'change') {
+                newValue = ''
+            }
+            // if (newValue === 0) {
+            //     newValue = ''
+            // }
+            console.log(newValue)
+            $id.value = newValue
+        }
+        $id1.addEventListener('input', () => Listener($id1, 'input'))
+        $id1.addEventListener('change', () => Listener($id1, 'change'))
+
+
+        const $id2 = document.getElementById('id2')
+        function Listener2($id, type, decimalPlaces = 2, includeZero) {
+            const value = $id.value
+            const temp = '\\d?\\d?'
+            let regStr = `^(-?\\d*)(\\.?)(${temp})`
+            // const regStr = `^\\d+(?:\\.\\d{0,${len}})?`
+            const reg = new RegExp(regStr)
+            // for (let index = 0; index < decimalPlaces; index++) {
+            //     reg += '\d?'
+            // }
+            // reg += ')/i' // 包含负数
+            // const reg = '^(-?\d*)$' // 包含负数
+            // const reg = /(\d*)/i // 不包含负数
+            let arr = value.match(reg)
+            console.log(arr)
+            console.log(RegExp.$1, RegExp.$2, RegExp.$3)
+            // let newValue = arr[0]
+            let newValue = RegExp.$1 + RegExp.$2 + RegExp.$3
+            if (type === 'change') {
+                if (newValue && newValue !== '-') {
+                    newValue = Number(newValue)
+                }
+                if (!includeZero && newValue === 0) {
+                    newValue = ''
+                }
+            }
+            console.log(newValue)
+            $id.value = newValue
+        }
+        $id2.addEventListener('input', () => Listener2($id2, 'input', decimalPlaces = 2))
+        $id2.addEventListener('change', () => Listener2($id2, 'change', decimalPlaces = 2, false))
+
+    </script>
+</body>
+
+</html>

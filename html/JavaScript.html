@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript</title>
+</head>
+
+<body>
+    <button id="btn">点我</button>
+    <script>
+        function myClick(el, name) {
+            const dom = document.getElementById(el)
+            dom.addEventListener('click', function () {
+                console.log(name)
+            })
+        }
+        myClick('btn', 'btn')
+
+        // for
+        // for (var i = 0; i <= 10; i++) {
+        //     setTimeout(function () {
+        //         console.log(i)
+        //     }, 1000 * i)
+        // }
+
+        // for (var i = 0; i <= 10; i++) {
+        //     // IIFE 每次迭代创建新的作用域
+        //     (function (j) {
+        //         setTimeout(function () {
+        //             console.log(i, j)
+        //         }, 1000 * j)
+        //     })(i)
+        // }
+
+        function moduleA() {
+            const a = 1
+            const b = 2
+            function A() {
+                console.log(a)
+            }
+            function B() {
+                console.log(b)
+            }
+            return {
+                A,
+                B
+            }
+        }
+        const mo = moduleA()
+        mo.A()
+        mo.B()
+    </script>
+</body>
+
+</html>

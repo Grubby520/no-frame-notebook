@@ -224,36 +224,56 @@
       // 「new 绑定」 > 「显式绑定」 > 「隐式绑定」 > 「默认绑定」
     </script>
     <script>
-        const boss = {
-            name: 'boss',
-            returnThis() {
-                return this
-            }
-        };
-        Log(boss.returnThis() === boss);
+        // 1.first
+        // const boss = {
+        //     name: 'boss',
+        //     returnThis() {
+        //         return this
+        //     }
+        // };
+        // Log(boss.returnThis() === boss);
 
-        const boss1 = {
-            name: 'boss1',
-            returnThis() {
-                return boss.returnThis();
-            }
-        };
-        Log(boss1.returnThis());
+        // const boss1 = {
+        //     name: 'boss1',
+        //     returnThis() {
+        //         return boss.returnThis();
+        //     }
+        // };
+        // Log(boss1.returnThis());
 
-        const boss2 = {
-            name: 'boss2',
-            returnThis() {
-                const returnThis = boss.returnThis; // function returnThis() {return this}
-                return returnThis();
-            }
-        };
-        Log(boss2.returnThis());
+        // const boss2 = {
+        //     name: 'boss2',
+        //     returnThis() {
+        //         const returnThis = boss.returnThis; // function returnThis() {return this}
+        //         return returnThis();
+        //     }
+        // };
+        // Log(boss2.returnThis());
 
-        const boss3 = {
-            name: 'boss3',
-            returnThis: boss.returnThis // function returnThis() {return this}
+        // const boss3 = {
+        //     name: 'boss3',
+        //     returnThis: boss.returnThis // function returnThis() {return this}
+        // }
+        // Log(boss3.returnThis());
+
+        // 2.second
+        function a() {
+            debugger
+            var value = 'a'
+            b()
         }
-        Log(boss3.returnThis());
+        function b() {
+            debugger
+            var value = 'b'
+            c()
+        }
+        function c() {
+            debugger
+            var value = 'c'
+            console.log(value)
+        }
+        var value = '1'
+        a()
     </script>
 </body>
 
