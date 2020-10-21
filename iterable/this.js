@@ -1,11 +1,11 @@
 {
     const obj = {
         init() {
-            console.log(this)
+            // console.log(this)
             this.setIn()
         },
         setIn() {
-            console.log('setIn')
+            // console.log('setIn')
         }
     }
     
@@ -29,20 +29,19 @@
     +new Date === new Date().getTime() // 构造函数不带参数，可以不写()
     +new Date() === Date.now()
     
-    ~3 === -4
-    ~x === -(x + 1)
+    ~3 === -4 // ~x === -(x + 1)
     // 建议使用Boolean(a)和！! a来进行显式强制类型转换
     
     // 隐式强制类型转换
-    const a = [1,2]
-    a + a === "1,21,2"
+    const a1 = [1,2]
+    a1 + a1 === "1,21,2";
     ([] + {}) === "[object Object]" // ?
     
     // 处理
     function foo() {}
     const temp = 3
     const hasTemp = Number(!!temp) // 转换成 0 / 1，取代逻辑判断&& || 
-    hsTemp && foo() // 短路 代码压缩
+    hasTemp && foo() // 短路 代码压缩
     
     // == ===
     // ==检查值是否相等，===检查值和类型是否相等
@@ -59,14 +58,14 @@
      * 数字与字符串校验相等
      * 11.9.3.4-5: 如果Type(x)是数字，Type(y)是字符串，则返回x == ToNumber(y)的结果
      */
-    const a = '2', b = 2;
-    a == b // toNumber(a) == b => 2 == 2
+    const a2 = '2', b2 = 2;
+    a2 == b2 // toNumber(a) == b2 => 2 == 2
     
     /**
      * 布尔值与其他类型的值校验相等
      * 11.9.3.6-7: 如果Type(x)是布尔类型，则返回ToNumber(x) == y的结果
      */
-    // (1) toNumber(b) == a => 1 == '2' false; (2) toNumber(b) == toNumber(a) => 1 == 2 false
+    // (1) toNumber(b) == a2 => 1 == '2' false; (2) toNumber(b) == toNumber(a2) => 1 == 2 false
     '2' == true // false
     '1' == true // true
     '0' == false // true
@@ -80,31 +79,30 @@
      * null和undefined相等，不全等；
      * 其他值与null和undefined都不相等；
      */
-    let a
-    null == a // true
-    undefined == a // true
+    let a3
+    null == a3 // true
+    undefined == a3 // true
     
     null == undefined // true
     null === undefined // false
     
-    a === undefined // true
-    a === null // false
+    a3 === undefined // true
+    a3 === null // false
 
     /**
      * 非对象与对象校验相等
      * 11.9.3.8-9: 如果Type(x)是字符串或数字，Type(y)是对象，则返回x ==ToPrimitive(y)的结果
      */
-    const a = 42, b = [42];
-    a == b // a == ToPrimitive(b) => 42 == '42'; a == toNumber(b) => 42 == 42 // true
+    const a4 = 42, b1 = [42];
+    a4 == b1 // a4 == ToPrimitive(b1) => 42 == '42'; a4 == toNumber(b1) => 42 == 42 // true
     // null undefined不能boxed
-    const a = null
-    a == Object(a) // Object(a)返回常规对象{}
+    null == Object(null) // Object(a4)返回常规对象{}clipboardShippingAddress
 
     /**
      * 特殊情况
      */
     Number.prototype.valueOf = function() {
-        debugger
+        // debugger
         return 3
     }
     2 == 3 // false
@@ -114,12 +112,12 @@
     // 实现 a == 2 && a == 3 （滥用，玩坏了）
     let i = 2
     Number.prototype.valueOf = function() {
-        debugger
+        // debugger
         return i++
     }
     const num = new Number(2)
     if (num == 2 && num == 3) {
-        console.log('done')
+        // console.log('done')
     }
 
     // 晕头转向
@@ -142,16 +140,16 @@
     0 == 0
 
     // toPrimitive
-    const a = new String('1')
+    const a5 = new String('1')
     new String('1') == 1
-    a.valueOf()
-    a.toString()
+    a5.valueOf()
+    a5.toString()
     '1' == 1
 
     // 变态辣 （! toBoolean规则，显式强制转行，并反转奇偶校验位）
-    [] == ![] // true gg思密达
+    ![] == [] // true gg思密达
     Boolean([]) // true => 反转，false
-    [] == false
+    false == []
     String([])
     '' == false
 
@@ -171,7 +169,9 @@
      * 如果双方都是字符串，按字母顺序来进行比较
      * 
      */
-    
-    
+    const obj_1 = {index: 1}
+    console.log(obj_1)
+    obj_1.index = 2
+    console.log(obj_1)
 
 }
