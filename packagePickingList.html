@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <style>
+        html {
+            font-family: "STSong-Light";
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #000;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .form-wrap {
+            width: 10cm;
+            height: 100%;
+            font-size: 6pt;
+        }
+
+        .form-wrap ul {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            list-style: none;
+        }
+
+        .form-wrap .table-wrap {
+            width: 99.5%;
+            padding: 0;
+            text-align: center;
+            border-collapse: collapse;
+        }
+
+        .form-wrap .sku-wrap img {
+            display: block;
+            max-width: 100%;
+            margin-top: 3px;
+        }
+
+        .form-wrap .order-info {
+            overflow: hidden;
+        }
+
+        .form-wrap .order-info .code-wrap {
+            width: 2.8cm;
+            padding-top: 5px;
+            float: left;
+            text-align: center;
+        }
+
+        .form-wrap .order-info .code-wrap h4 {
+            margin: 0;
+            padding: 0;
+            height: 25px;
+            line-height: 25px;
+        }
+
+        .form-wrap .order-info .code-wrap .qrcode {
+            width: 75px;
+            height: 75px;
+        }
+
+        .form-wrap .order-info .code-wrap p {
+            margin: 0;
+            height: 25px;
+            line-height: 25px;
+            text-align: center;
+        }
+
+        .form-wrap .order-info .order-detail {
+            width: 4cm;
+            padding: 5px 0;
+            margin: 0;
+            list-style: none;
+            float: left;
+        }
+
+        .form-wrap .order-info .order-detail li {
+            /*height: 21px;*/
+            line-height: 1.2;
+            text-align: left;
+        }
+
+
+        .border {
+            border: 1px solid #000;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+
+        .fcnt {
+            display: flex;
+            flex: 0 0 auto;
+            width: 100px;
+            height: 100px;
+            margin-right: 10px;
+            background: #777;
+            border-radius: 5px;
+        }
+
+        .cnt {
+            height: 30px;
+            width: 30px;
+            background: #fff;
+            border-radius: 30px;
+        }
+
+        .fcnt32 {
+            flex-wrap: wrap;
+            align-content: space-between;
+
+        }
+
+        .fcnt32 .rows {
+            flex-basis: 100%;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .fcnt32 .rows:nth-child(2) {
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="fcnt fcnt32">
+        <div class="rows">
+            <div class="cnt"></div>
+            <div class="cnt"></div>
+        </div>
+        <div class="rows">
+            <div class="cnt"></div>
+        </div>
+        <div class="rows">
+            <div class="cnt"></div>
+            <div class="cnt"></div>
+        </div>
+    </div>
+    <div class="form-wrap">
+        <div class="border" style="border: solid 1px #000; margin: 5px;">
+            <div class="border title">
+                缺货任务清单
+            </div>
+            <div class="header">
+
+            </div>
+        </div>
+        <ul>
+            <li class="list-warp">
+                <div class="order-info">
+                    <div class="code-wrap">
+                        <h4>拣货任务</h4>
+                        <img name="pickingImgCode" class="qrcode" code="${pickingNumber}" codeType="qrBarcode"
+                            charset="UTF-8" errorcorrection="" />
+                        <p>${pickingNumber}</p>
+                    </div>
+                    <ul class="order-detail">
+                        <li>拣货人：${pickingUserName!''}</li>
+                        <li>包装人：${packUserName!''}</li>
+                        <li>打印时间：${printeAt!''}</li>
+                        <li>
+                            <img name="trackingImgCode" codeType="barcode128" code="${trackingNumber}" charset="UTF-8"
+                                errorcorrection="" />
+                        </li>
+                    </ul>
+                    <div class="code-wrap" style="float: right">
+                        <h4>包裹号码</h4>
+                        <img name="packageImgCode" class="qrcode" codeType="qrBarcode" code="${packgeNumber}"
+                            charset="UTF-8" errorcorrection="" />
+                        <p>${packgeNumber}</p>
+                    </div>
+                </div>
+                <div>
+                    <table class="table-wrap" border="1">
+                        <tr>
+                            <th style=""><span>编号</span></th>
+                            <th><span>商品名称</span></th>
+                            <th><span>SKU</span></th>
+                            <th><span>总数</span></th>
+                            <th>实际</th>
+                            <th>缺少</th>
+                            <th>货架位</th>
+                            <th>销售属性</th>
+                            <!--<th style="width:10mm">编号</th>-->
+                            <!--<th style="width:18mm">商品名称</th>-->
+                            <!--<th style="width:18mm">SKU</th>-->
+                            <!--<th style="width:12mm">总数</th>-->
+                            <!--<th style="width:12mm">实际</th>-->
+                            <!--<th style="width:12mm">缺少</th>-->
+                            <!--<th style="width:12mm">货架位</th>-->
+                            <!--<th>销售属性</th>-->
+                        </tr>
+                        <#list skus as item>
+                            <tr>
+                                <td>${item_index+1}</td>
+                                <td>${item.chineseName}</td>
+                                <td>${item.skuCode}</td>
+                                <td>${item.quantity}</td>
+                                <td>${item.pickedQuantity}</td>
+                                <td>${item.lackQuantity}</td>
+                                <td>${item.locationCode!''}</td>
+                                <td>${item.attributesStr!''}</td>
+                            </tr>
+                        </#list>
+                    </table>
+                </div>
+            </li>
+        </ul>
+    </div>
+</body>
+
+</html>

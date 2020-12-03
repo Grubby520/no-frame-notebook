@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <style>
+        html {
+            font-family: "STSong-Light";
+        }
+
+        body {
+            background-color: #ffffff;
+            color: #000;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        /* start */
+        .form-wrap {
+            width: 10cm;
+            font-size: 6pt;
+            box-sizing: border-box;
+            padding: 2px;
+        }
+
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .border {
+            border: 1px solid #000;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .title {
+            text-align: center;
+            line-height: 1.5;
+            border: 1px solid #000;
+            border-bottom: none;
+            font-size: 7pt;
+            font-weight: bolder;
+        }
+
+        .flex {
+            border: 1px solid #000;
+            /* display: flex;
+            flex: 0 0 auto;
+            flex-wrap: wrap;
+            align-content: space-between; */
+        }
+
+        .flex .rows {
+            /* flex-basis: 100%;
+            display: flex;
+            justify-content: space-between; */
+            clear: both;
+        }
+
+        .cnt {
+            float: left;
+            width: 33.33333%;
+            box-sizing: border-box;
+        }
+
+        .cnt-ul {
+            width: 98%;
+            margin: 0 auto;
+        }
+
+        .sku-wrap {
+            margin-top: 15px;
+            width: 98%;
+            margin: 15px auto 0;
+        }
+
+        .sku-wrap img {
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        /* table */
+        .table {
+            /* box-sizing: border-box;
+            table-layout: fixed; */
+            width: 100%;
+            padding: 0;
+            text-align: center;
+            border-collapse: collapse;
+            margin: 5pt auto 0;
+            text-align: left;
+        }
+
+        .table td {
+            word-break: break-all;
+        }
+
+        .clearfix:before,
+        .clearfix:after {
+            content: "";
+            display: block;
+            clear: both;
+
+        }
+
+        .clearfix {
+            zoom: 1;
+
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-wrap">
+        <div class="title">
+            缺货任务清单
+        </div>
+
+        <div class="flex">
+            <div class="rows clearfix">
+                <div class="cnt">
+                    <ul class="cnt-ul">
+                        <li class="li">时间：${createdAtStr!''} </li>
+                        <li class="li">仓库：${warehouseName!''}</li>
+                        <li class="li">类型：${packageTypeName!''}</li>
+                        <li class="li">是否跨区：
+                            <#if crossArea!''==''>
+                                <#elseif crossArea==true>
+                                    是
+                                    <#else>
+                                        否
+                            </#if>
+                        </li>
+                    </ul>
+                </div>
+                <div class="cnt">
+                    <div class="sku-wrap">
+                        <img name="trackingImgCode" codeType="barcode128" code="${pickingNumber}" charset="UTF-8"
+                            errorcorrection="" />
+                        <!-- <img src="./assets/images/batchno.png" alt=""> -->
+                    </div>
+                </div>
+                <div class="cnt">
+                    <ul class="cnt-ul">
+                        <li>拣货人：${PickingUserName!''}</li>
+                        <li>拣货任务编号：${pickingNumber!''}</li>
+                        <#if crossArea!''==''>
+                            <#elseif crossArea==true>
+                                <li>
+                                    批次SKU总数：${allSkuCount!''}&nbsp;&nbsp;批次产品总数：${allProductCount!''}
+                                </li>
+                        </#if>
+                        <li>
+                            SKU总数：${skuCount!''}&nbsp;&nbsp;产品总数：${productCount!''}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <table class="table" border="1">
+            <tr>
+                <th>编号</th>
+                <th>库位</th>
+                <th>SKU</th>
+                <th>数量</th>
+                <th>商品名称</th>
+            </tr>
+            <#list items as item>
+                <tr>
+                    <td>${item_index+1}</td>
+                    <td>${item.locationCode}</td>
+                    <td>${item.skuCode}</td>
+                    <td>${item.skuQuantity}</td>
+                    <td>${item.productChineseName}<#if item.attributeJsonValue !=''>-</#if>${item.attributeJsonValue}
+                    </td>
+                </tr>
+            </#list>
+        </table>
+    </div>
+</body>
+
+</html>
