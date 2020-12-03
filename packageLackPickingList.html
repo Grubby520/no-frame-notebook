@@ -53,7 +53,7 @@
             font-size: 7pt;
             font-weight: bolder;
         }
-
+        /* freemarker flex布局失效 */
         .flex {
             border: 1px solid #000;
             /* display: flex;
@@ -85,12 +85,13 @@
             width: 98%;
             margin: 15px auto 0;
         }
-
+        /* freemarker code转img-等比缩放失效 */
         .sku-wrap img {
-            width: auto;
+            /* width: auto;
             height: auto;
             max-width: 100%;
-            max-height: 100%;
+            max-height: 100%; */
+            width: 99%;
         }
 
         /* table */
@@ -151,7 +152,7 @@
                     <div class="sku-wrap">
                         <img name="trackingImgCode" codeType="barcode128" code="${pickingNumber}" charset="UTF-8"
                             errorcorrection="" />
-                        <!-- <img src="./assets/images/batchno.png" alt=""> -->
+                        <!-- <img src="./assets/images/233.png" alt=""> -->
                     </div>
                 </div>
                 <div class="cnt">
