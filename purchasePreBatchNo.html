@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Document</title>
+  <style>
+    html {
+      /* font-family: sans-serif; */
+      font-family: "Gen Jyuu GothicX Medium", "Microsoft YaHei UI", Arial, sans-serif;
+    }
+
+    body {
+      background-color: #ffffff;
+      color: #000;
+      font-size: 7.5pt;
+      margin: 0;
+      font-family: "Gen Jyuu GothicX Medium", "Microsoft YaHei UI", Arial, sans-serif;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+      text-align: center;
+    }
+
+    .sku-container-purchase {
+      width: 60mm;
+    }
+
+    .sku-info {
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    .title {
+      font-size: 18px;
+    }
+
+    .bill-number li {
+      text-align: right;
+      line-height: 1.5;
+    }
+
+    .page-size {
+      position: absolute;
+      bottom: 0.5mm;
+      right: 2.5mm;
+      font-size: 7pt;
+    }
+  </style>
+</head>
+
+<body style="font-family: 'Microsoft YaHei UI'">
+  <div class="sku-container-purchase">
+    <div class="sku-print">
+
+      <#list items as item>
+        <div class="sku-info batch-no-print">
+          <ul class="batch-cnt">
+            <li class="title">
+              ${item.skuCode}
+            <li>
+              <div class="barcode">
+                <img name="trackingImgCode" codeType="barcode128" code="${item.batchNo}" charset="UTF-8"
+                  errorcorrection="" />
+              </div>
+            </li>
+          </ul>
+          <ul class="bill-number">
+            <li style="word-break:break-all;">
+              Att:${item.productVariantAttributes && item.productVariantAttributes.join('/') || ''}
+            </li>
+            <li>
+              Loc:${item.locationCode || ''}</li>
+            <li>
+              TNumber:${ item.purchaseBatchNo || ''}
+            </li>
+            <li>
+              PrintTime:${item.printedAt || ''}</li>
+          </ul>
+          <div class="page-size">
+            ${item_index + '/' + items?size}
+          </div>
+        </div>
+        <#list>
+
+    </div>
+  </div>
+</body>
+
+</html>
