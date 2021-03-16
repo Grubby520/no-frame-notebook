@@ -1,136 +1,185 @@
+//Promise/A+规定的三种状态
 const PENDING = 'pending'
 const FULFILLED = 'fulfilled'
 const REJECTED = 'rejected'
 
 class MyPromise {
-	constructor(executor) {
-		// console.log(1)
-		// console.log(executor)
-		this._status = PENDING
-		this._resolveQueue = []
-		this._rejectQueue = []
+  // 构造方法接收一个回调
+  constructor(executor) {
+    this._status = PENDING     // Promise状态
+    this._value = undefined// 储存then回调return的值
+    this._resolveQueue = []    // 成功队列, resolve时触发
+    this._rejectQueue = []     // 失败队列, reject时触发
 
-		const _resolve = (val) => {
-			if (this._status !== PENDING) return
-			this._status = FULFILLED
-			while(this._resolveQueue.length) {
-				const cb = this._resolveQueue.shift()
-				cb(val)
-			}
-		}
+    // 由于resolve/reject是在executor内部被调用, 因此需要使用箭头函数固定this指向, 否则找不到this._resolveQueue
+    let _resolve = (val) => {
+      //把resolve执行回调的操作封装成一个函数,放进setTimeout里,以兼容executor是同步代码的情况
+      const run = () => {
+        if(this._status !== PENDING) return// 对应规范中的"状态只能由pending到fulfilled或rejected"
+        this._status = FULFILLED              // 变更状态
+        this._value = val                     // 储存当前value
 
-		const _reject = (val) => {
-			if (this._status !== PENDING) return
-			this._status = REJECTED
-			while(this._rejectQueue.length) {
-				const cb = this._rejectQueue.shift()
-				cb(val)
-			}
-		}
+        // 这里之所以使用一个队列来储存回调,是为了实现规范要求的 "then 方法可以被同一个 promise 调用多次"
+        // 如果使用一个变量而非队列来储存回调,那么即使多次p1.then()也只会执行一次回调
+        while(this._resolveQueue.length) {
+          const callback = this._resolveQueue.shift()
+          callback(val)
+        }
+      }
+      setTimeout(run)
+    }
+    // 实现同resolve
+    let _reject = (val) => {
+      const run = () => {
+        if(this._status !== PENDING) return// 对应规范中的"状态只能由pending到fulfilled或rejected"
+        this._status = REJECTED               // 变更状态
+        this._value = val                     // 储存当前value
+        while(this._rejectQueue.length) {
+          const callback = this._rejectQueue.shift()
+          callback(val)
+        }
+      }
+      setTimeout(run)
+    }
+    // new MyPromise()时立即执行executor,并传入resolve和reject
+    executor(_resolve, _reject)
+  }
 
-		// new操作时立即执行入参函数
-		executor(_resolve, _reject)
-	}
-
-    // 收集依赖
-	then(resolveFn, rejectFn) {
-		// console.log(3)
-		// console.log(resolveFn)
-		// 满足链式调用，返回一个promise
-		return new MyPromise((resolve, reject) => {
-			const fulfilledFn = value => {
-				try {
-					const x = resolveFn(value)
-					x instanceof MyPromise ? x.then(resolve, reject) : resolve(x)
-				} catch (error) {
-					reject(error)
-				}
-			}
-			this._resolveQueue.push(fulfilledFn)
-
-			const rejectedFn = value => {
-				try {
-					const x = rejectFn(value)
-					x instanceof MyPromise ? x.then(resolve, reject) : resolve(x)
-				} catch (error) {
-					reject(error)
-				}
-			}
-			this._rejectQueue.push(rejectedFn)
-		})
-		// this._resolveQueue.push(resolve)
-		// this._rejectQueue.push(reject)
-	}
-}
-
-{
-    const myPromise = new MyPromise((resolve) => {
-        // console.log(2)
-        // console.log(resolve)
-        setTimeout(() => {
-            // console.log(4)
-            // console.log(resolve)
-            resolve('success')
-        }, 1500)
+  // then方法,接收一个成功的回调和一个失败的回调
+  then(resolveFn, rejectFn) {
+    // 根据规范，如果then的参数不是function，则我们需要忽略它, 让链式调用继续往下执行
+    typeof resolveFn !== 'function' ? resolveFn = value => value : null
+    typeof rejectFn !== 'function' ? rejectFn = error => error : null
+  
+    // return一个新的promise
+    return new MyPromise((resolve, reject) => {
+      // 把resolveFn重新包装一下,再push进resolve执行队列,这是为了能够获取回调的返回值进行分类讨论
+      const fulfilledFn = value => {
+        try {
+          // 执行第一个(当前的)Promise的成功回调,并获取返回值
+          let x = resolveFn(value)
+          // 分类讨论返回值,如果是Promise,那么等待Promise状态变更,否则直接resolve
+          x instanceof MyPromise ? x.then(resolve, reject) : resolve(x)
+        } catch (error) {
+          reject(error)
+        }
+      }
+  
+      // reject同理
+      const rejectedFn  = error => {
+        try {
+          let x = rejectFn(error)
+          x instanceof MyPromise ? x.then(resolve, reject) : resolve(x)
+        } catch (error) {
+          reject(error)
+        }
+      }
+  
+      switch (this._status) {
+        // 当状态为pending时,把then回调push进resolve/reject执行队列,等待执行
+        case PENDING:
+          this._resolveQueue.push(fulfilledFn)
+          this._rejectQueue.push(rejectedFn)
+          break;
+        // 当状态已经变为resolve/reject时,直接执行then回调
+        case FULFILLED:
+          fulfilledFn(this._value)    // this._value是上一个then回调return的值(见完整版代码)
+          break;
+        case REJECTED:
+          rejectedFn(this._value)
+          break;
+      }
     })
+  }
 
-		console.log(myPromise)
+	// catch 执行then的第二个方法
+	catch(rejectFn) {
+		return this.then(undefined, rejectFn)
+	}
 
-		// Subscriber
-    // myPromise.then(res => {
-    //     console.log(5)
-    //     console.log(res)
-    // })
+	/**
+	 * resolve 返回以给定值的fulfilled态的Promise
+	 * ps：返回值的类型区分
+	 * 1. 带有\then\方法的thenable对象，返回的promise取决该对象的最终状态
+	 * 2. 非thenable对象值，返回这个值的fulfilled态的promise
+	 * 3. 这个函数将类promise对象的多层嵌套给予flat
+	 */
+	static resolve(value) {
+		if (value instanceof MyPromise) return value
+		return new MyPromise(resolve => resolve(value))
+	}
 
-    // Subscriber
-    // myPromise.then(res => {
-    //     console.log(5.1)
-    //     console.log(res)
-    // })
+	// reject 返回rejected态的Promise
+	static reject(error) {
+		return new MyPromise(undefined, reject => reject(error))
+	}
 
-		// chaining
-		const chainingP = myPromise
-			.then(res => {
-				console.log(res)
-				return {
-					res
-				}
-			}).then(res1 => {
-				console.log(res1)
+	// finally 无论哪种结果都会执行的回调函数 还会把值继续向后传递
+	finally(cb) {
+		return this.then(
+			value => MyPromise.resolve(cb()).then(() => value),
+			error => MyPromise.reject(cb()).then(() => { throw error })
+		)
+	}
+
+	// all 所有promise返回后 | 一个promise reject 才触发modify方法 
+	static all(promiseArr) {
+		let index = 0
+		const result = []
+		return new MyPromise((resolve, reject) => {
+			promiseArr.forEach((p, i) => {
+				// 包装 处理返回值不是promise的场景
+				MyPromise.resolve(p).then(val => {
+					index++
+					result[i] = val
+					// 所有接口resolve
+					if (index === promiseArr.length) {
+						resolve(result)
+					}
+				}, (error) => {
+					// 一个接口reject
+					reject(error)
+				})
 			})
+		})
+	}
 
-		console.log(chainingP)
+	// race 有一个promise状态改变 立即触发modify 返回promise
+	static race(promiseArr) {
+		return new MyPromise((resolve, reject) => {
+			for (let p of promiseArr) {
+				MyPromise.resolve(p)
+				.then(value => {
+					resolve(value)
+				}).catch(error => {
+					reject(error)
+				})
+			}
+		})
+	}
+
 }
 
-// {
-// 	/**
-// 	 * 链式调用，返回的值必然是一个新的promise
-// 	 * 链式顺序执行，上一个promise状态改变才会触发依赖执行
-// 	 * 
-// 	 */
-// 	const p1 = new Promise((resolve, reject) => {
-// 			resolve(1)
-// 	})
-	
-// 	const result = 
-// 		p1
-// 			.then(res => {
-// 					console.log(res)
-// 					return {
-// 							success: true,
-// 							data: []
-// 					}
-// 			})
-// 			.then(res => {
-// 				console.log(res)
-// 				return new Promise(resolve => {
-// 					setTimeout(() => {
-// 						resolve('new Promise result')
-// 					}, 1000)
-// 				})
-// 			})
-// 			.then(res => {
-// 				console.log(res)
-// 			})
-// 	console.log(result)
-// }
+const p1 = new MyPromise((resolve, reject) => {
+  resolve(1) // 同步executor测试
+})
+
+p1
+  .then(res => {
+    console.log(res)
+    return 2 // 链式调用测试
+  })
+  .then()             //值穿透测试
+  .then(res => {
+    console.log(res)
+    return new MyPromise((resolve, reject) => {
+      resolve(3) // 返回Promise测试
+    })
+  })
+  .then(res => {
+    console.log(res)
+    throw new Error('reject测试') // reject测试
+  })
+  .then(() => {}, err => {
+    console.log(err)
+  })
