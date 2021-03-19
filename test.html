@@ -8,6 +8,42 @@
 </head>
 <body>
     <!-- <script src="./others/regexp.js"></script> -->
-    <script src="./others/myPromise.js"></script>
+    <!-- <script src="./others/myPromise.js"></script> -->
+    <script src="./others/easy.js"></script>
+    <!-- <script src="node_modules/es6-promise/dist/es6-promise.js"></script>
+    <script>
+        console.log(ES6Promise)
+        new ES6Promise((resolve,reject) => {
+            console.log('外部promise')
+            resolve()
+        })
+            .then(() => {
+                console.log('外部第一个then')
+                // 遇到new会立即执行executor
+                // new ES6Promise((resolve,reject) => {
+                return new ES6Promise((resolve,reject) => {
+                    console.log('内部promise')
+                    // 这tm怎么说
+                    resolve()
+                })
+                    .then(() => {
+                        console.log('内部第一个then')
+                        return ES6Promise.resolve()
+                    })
+                        .then(() => {
+                        console.log('内部第二个then')
+                    })
+                        // 没有return,Promise会让链式继续下去
+            })
+            .then(() => {
+                console.log('外部第二个then')
+            })
+            .then(() => {
+                console.log('外部第三个then')
+            })
+            .then(() => {
+                console.log('外部第四个then')
+            })
+    </script> -->
 </body>
 </html>

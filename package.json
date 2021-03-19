@@ -1,0 +1,30 @@
+{
+  "name": "no-frame-notebook",
+  "version": "1.0.0",
+  "description": "",
+  "main": ".babelrc.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "watch": "webpack --watch",
+    "start": "webpack serve --open"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Grubby520/no-frame-notebook.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Grubby520/no-frame-notebook/issues"
+  },
+  "homepage": "https://github.com/Grubby520/no-frame-notebook#readme",
+  "dependencies": {
+    "es6-promise": "^4.2.8"
+  },
+  "devDependencies": {
+    "html-webpack-plugin": "^5.3.1",
+    "webpack": "^5.26.3",
+    "webpack-cli": "^4.5.0"
+  }
+}
