@@ -2,7 +2,7 @@ const PENDING = 'pending'
 const FULFILLED = 'fulfilled'
 const REJECTED = 'rejected'
 
-import { isFunction, getDataType, isArray } from './util'
+import { isFunction, getDataType, isArray, isIterable } from './util'
 
 class MyPromise {
     constructor(executor) {
@@ -156,7 +156,7 @@ class MyPromise {
     }
 
     static all(iterable) {
-        if (isArray(iterable)) {
+        if (isIterable(iterable)) {
             return new MyPromise((resolve, reject) => {
                 const len = iterable.length
                 let [count, result] = [0, []]

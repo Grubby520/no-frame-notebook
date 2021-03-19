@@ -22,3 +22,7 @@ export function getRandomString() {
 export function getDataType(data) {
     return Object.prototype.toString.call(data)
 }
+
+export function isIterable(iterable) {
+    return typeof iterable[Symbol.iterator] === 'function'
+}
