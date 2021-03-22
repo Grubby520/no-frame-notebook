@@ -2,6 +2,7 @@ const PENDING = 'pending'
 const FULFILLED = 'fulfilled'
 const REJECTED = 'rejected'
 
+import { resolve } from 'node:path'
 import { isFunction, getDataType, isArray, isIterable } from './util'
 
 class MyPromise {
@@ -231,4 +232,100 @@ new MyPromise((resolve, reject) => {
       console.log('外部第四个then')
     })
 
-MyPromise.all({})
+{
+    // 强化
+    // 1 宏任务start
+    new Promise(resolve => {
+        console.log('2 promise1')
+        resolve() // 3 settled
+    })
+        // 4 立即执行then,then之前的实例已经settled,then回调放入队列(消息1)
+        .then(() => {
+            // 10 执行回调(消息1)
+            console.log("外部第一个then")
+            new Promise(resolve => {
+                console.log("promise2")
+                resolve() // 11 settled
+            })
+                // 12 立即执行then,then之前的实例已经settled,then回调放入队列(消息2)
+                .then(() => {
+                    console.log("内部第一个then")
+                    return Promise.resolve() // 16 新生成微任务放入队列(消息4) PS1: 并没有settled,故下面的then回调不会放入队列
+                    // 20 微任务promise_0.then执行,then的回调放入队列
+                })
+                // 13 立即执行then,then之前的实例还未settled,then回调暂存
+                // 24 微任务promise_1执行完毕，实例已settled，then回调放入队列
+                .then(() => {
+                    // 28 执行回调
+                    console.log("内部第二个then")
+                })
+                // 14 外部第一个then回调执行完毕,返回非thenable(undefined) 实例已经settled
+        })
+        // 5 立即执行then,then之前的实例还未settled,then回调暂存
+        // 15 then回调放入队列(消息3)
+        .then(() => {
+            // 17 执行回调
+            console.log('外部第二个then')
+            // 18 执行完毕,返回非thenable(undefined) 实例已经settled
+        })
+        // 6 立即执行then,then之前的实例还未settled,then回调暂存
+        // 19 then回调放入队列
+        .then(() => {
+            // 21 回调执行
+            console.log('外部第三个then')
+            // 22 执行完毕,返回非thenable(undefined) 实例已经settled
+        })
+        // 7 立即执行then,then之前的实例还未settled,then回调暂存
+        // 23 then回调放入队列
+        .then(() => {
+            // 25 执行回调
+            console.log('外部第四个then')
+            // 26 执行完毕，返回非thenable(undefined) 实例已经settled
+        })
+        // 8 立即执行then,then之前的实例还未settled,then回调暂存
+        // 27 then回调放入队列
+        .then(() => {
+            // 29 执行回调
+            console.log('外部第五个then')
+        })
+        // 9 宏任务end
+
+    /**
+     * 宏任务start
+     * (队列)外部第一个then回调
+     * 宏任务end
+     * (执行)外部第一个then回调
+     * (队列清空)
+     * 
+     * (队列)内部第一个then回调
+     * (队列)外部第二个then回调
+     * 
+     * (执行)内部第一个then回调
+     * 
+     * (队列)内部第一个then回调返回的微任务
+     * 
+     * (执行)外部第二个then回调
+     * 
+     * (队列)外部第三个then回调
+     * 
+     * (执行)内部第一个then回调返回的微任务-内部第一个then的回调返回的promise_0的then方法,settled
+     * 
+     * (队列)微任务的then的回调放入队列
+     * 
+     * (执行)外部第三个then回调
+     * 
+     * (队列)外部第四个then回调
+     * 
+     * (执行)微任务的then的回调, 内部的第一个then的实例settled
+     * 
+     * (队列)内部第二个then回调
+     * 
+     * (执行)外部第四个then回调
+     * 
+     * (队列)外部第五个then回调
+     * 
+     * (执行)内部第二个then回调
+     * (执行)外部第五个then回调
+     * 
+     */
+}

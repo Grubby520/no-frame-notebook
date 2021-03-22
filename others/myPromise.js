@@ -233,3 +233,89 @@ new MyPromise((resolve,reject) => {
     })
 
 consol('end')
+
+{
+
+  new Promise((resolve,reject)=>{
+    console.log("promise1")
+    resolve( )
+  })
+  .then(()=>{
+    console.log("外部第一个then")
+    new Promise((resolve,reject)=>{
+      console.log("promise2")
+      resolve()
+    }).then(()=>{
+      console.log("内部第一个then")
+    }).then(()=>{
+      console.log("内部第二个then")
+    })
+  })
+  .then(()=>{
+    console.log("外部第二个then")
+  })
+
+  // 0 宏任务开始执行
+  new Promise((resolve,reject) => {
+    console.log('1 外部promise')
+    resolve() // 1 调用resolve之后,代表实例就被fulfilled了
+  })
+    .then(() => {
+      // 2 then前面的实例已经fulfilled,立即执行then,回调1进入队列(外部第一个 then 回调)
+      // 7 队列取消息1-执行then回调
+      console.log('2 外部第一个then')
+      new Promise((resolve,reject) => {
+      // return new Promise((resolve,reject) => {
+        // 8 new实例
+          console.log('3 内部promise')
+          resolve() // 代表这个实例已经fulfilled
+      })
+          .then(() => {
+            // 9 立即执行then, 因为then前面的实例已经fulfilled,回调2进入队列
+            // 12 队列取消息2-执行then回调
+          console.log('内部第一个then')
+          return Promise.resolve() // return了,在队列中放入一个新生成的微任务1
+          // 16 内部第一个then的微任务执行完毕,回调进入队列
+          // 19 执行回调,状态fulfilled
+      })
+          .then(() => {
+            // 10 执行then,因为then前面的实例pending,回调暂存
+            // 12.1 继续等待
+            // 20 回调放入队列
+            // 22 执行回调,没有继续链式,所以不会再往队列添加新的回调
+          console.log('8 内部第二个then')
+          
+      })
+  })
+  .then(() => {
+    // 3 执行then,上一个实例pending,回调暂存状态,不会放入队列
+    // 13 外部第一个then返回非thenable(undefined),说明实例已经fulfilled,回调放入队列
+    // 14 执行回调
+    console.log('4 外部第二个then')
+  })
+  .then(() => {
+    // 4 执行then,上一个实例pending,回调暂存状态,不会放入队列
+    // 15 第三个then回调放入队列
+    // 17 执行回调
+    console.log('5 外部第三个then')
+  })
+  .then(() => {
+    // 5 执行then,上一个实例pending,回调暂存状态,不会放入队列
+    // 18 回调进入队列
+    // 21 执行回调
+    console.log('6 外部第四个then')
+  })
+  .then(() => {
+    console.log('9 外部第五个then')
+  })
+  // 6 宏任务执行完毕
+
+  /**
+   * 外部第一个then回调
+   * 内部第一个then回调
+   * 外部第二个then回调
+   * microTask 1
+   * 
+   */
+
+}
