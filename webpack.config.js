@@ -1,17 +1,17 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const path = require('path');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const path = require("path");
 
 module.exports = {
-  mode: 'production',
-  entry: './FINISHED/my-promise/my-promise.js',
+  mode: "development",
+  entry: "./src/main.js",
   output: {
-    filename: 'main.js',
-    path: path.resolve(__dirname, 'dist'),
-    clean: true
+    filename: "bundle.js",
+    path: path.resolve(__dirname, "dist"),
+    clean: true,
   },
   devServer: {
     hot: true,
-    contentBase: './dist'
+    contentBase: "./dist",
   },
-  plugins: [new HtmlWebpackPlugin()]
+  plugins: [new HtmlWebpackPlugin()],
 };

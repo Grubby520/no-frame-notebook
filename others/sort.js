@@ -28,7 +28,7 @@ function getOriginList(len = 10) {
 function combineSort(list = []) {
     const result = []
     // 具体实现
-    list.sort()
+    // ...
     return result
 }
 

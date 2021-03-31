@@ -33,3 +33,20 @@ export function filterRepeat(data, compareKey) {
         return acc
     }, [])
 }
+
+/**
+ * 优雅处理await异步promise的异常
+ * @param {Promise} promise 
+ * @returns {Promise} promise实例
+ */
+export function awaitTo(promise) {
+  if (promise instanceof Promise) {
+    return promise.then(res => {
+      return [null, res]
+    }).catch(err => {
+      return [err]
+    })
+  } else {
+    return Promise.resolve(promise)
+  }
+}

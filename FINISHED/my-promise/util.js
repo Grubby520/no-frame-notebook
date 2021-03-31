@@ -26,3 +26,6 @@ export function getDataType(data) {
 export function isIterable(iterable) {
     return typeof iterable[Symbol.iterator] === 'function'
 }
+
+
+
