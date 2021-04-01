@@ -1,4 +1,5 @@
-import { isObjectLike } from "lodash";
+import isObjectLike from "./isObjectLike";
+import baseGetTag from "./_objectToString";
 
 const symbolTag = "[object Symbol]";
 
