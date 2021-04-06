@@ -1,0 +1,12 @@
+[ignore]
+
+[include]
+./lodash/.*
+
+[libs]
+
+[lints]
+
+[options]
+
+[strict]
