@@ -19,5 +19,5 @@ export default function arrayMap(array, iterator) {
         iterator(array[index], index, array)) ||
       array[index]; // 支持3个参数 值、下标、数组本身
   }
-  return result;
+  console.log("dfdff");
 }
