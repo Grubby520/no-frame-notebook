@@ -55,4 +55,5 @@ console.log(sum(1)(2)(3)(4).sumOf()); //10
 // console.log(sum_01(1,2)(3)(4).sumOf()) //10
 // console.log(sum_01(1)(2)(3)(4).sumOf()) //10
 // test
+// positionA - changes
 // sub project modified
